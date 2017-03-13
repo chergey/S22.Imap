@@ -66,17 +66,6 @@ namespace S22.Imap {
 		/// <include file='Examples.xml' path='S22/Imap/ImapClient[@name="Login"]/*'/>
 		void Login(string username, string password, AuthMethod method);
 
-		/// <summary>
-		/// Logs an authenticated client out of the server. After the logout sequence has been completed,
-		/// the server closes the connection with the client.
-		/// </summary>
-		/// <exception cref="BadServerResponseException">An unexpected response has been received from
-		/// the server during the logout sequence.</exception>
-		/// <remarks>Calling this method in non-authenticated state has no effect.</remarks>
-		/// <exception cref="IOException">There was a failure writing to or reading from the
-		/// network.</exception>
-		/// <exception cref="ObjectDisposedException">The ImapClient object has been disposed.</exception>
-		void Logout();
 
 		/// <summary>
 		/// Returns an enumerable collection of capabilities the IMAP server supports. All strings in
