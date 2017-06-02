@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace S22.Imap {
+﻿namespace S22.Imap {
 	/// <summary>
 	/// Defines supported means of authenticating with an IMAP server.
 	/// </summary>

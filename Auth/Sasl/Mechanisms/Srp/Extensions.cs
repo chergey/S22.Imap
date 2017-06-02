@@ -1,8 +1,5 @@
-﻿using S22.Imap.Auth;
-using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using System.Linq;
 
 namespace S22.Imap.Auth.Sasl.Mechanisms.Srp {
 	/// <summary>

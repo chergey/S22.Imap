@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using S22.Imap.Bodystructure;
 
 namespace S22.Imap.Test {
 	/// <summary>
@@ -14,7 +15,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		public void ParseBodystructure() {
 			foreach (KeyValuePair<string, Bodypart[]> pair in dict) {
-				Bodypart[] parts = Bodystructure.Parse(pair.Key);
+				Bodypart[] parts = Bodystructure.Bodystructure.Parse(pair.Key);
 
 				// Must have same number of body parts
 				Assert.AreEqual<int>(parts.Length, pair.Value.Length);
@@ -34,7 +35,7 @@ namespace S22.Imap.Test {
 		public void ThrowOnInvalidBodystructure() {
 			string invalidBodystructure = "((NIL (123) ABC))";
 
-			Bodystructure.Parse(invalidBodystructure);
+			Bodystructure.Bodystructure.Parse(invalidBodystructure);
 		}
 
 		/// <summary>

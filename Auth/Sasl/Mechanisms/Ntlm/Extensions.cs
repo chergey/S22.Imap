@@ -1,6 +1,4 @@
-﻿using S22.Imap.Auth;
-using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {

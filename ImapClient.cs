@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
+using S22.Imap.Bodystructure;
 
 namespace S22.Imap {
 	/// <summary>
@@ -1144,7 +1145,7 @@ namespace S22.Imap {
 				MailMessage message = MessageBuilder.FromHeader(header);
 				string structure = GetBodystructure(uid, mailbox);
 				try {
-					Bodypart[] parts = Bodystructure.Parse(structure);
+					Bodypart[] parts = Bodystructure.Bodystructure.Parse(structure);
 					foreach (Bodypart part in parts) {
 						// Let the delegate decide whether the part should be fetched or not.
 						if (callback(part) == true) {

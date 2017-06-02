@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace S22.Imap {
+namespace S22.Imap.Bodystructure {
 	/// <summary>
 	/// Provides a means for parsing the textual description of the body structure of a mail
 	/// message as is returned by an IMAP server for a "FETCH BODYSTRUCTURE" command.

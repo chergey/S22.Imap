@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
+using S22.Imap.Bodystructure;
 
 namespace S22.Imap {
 	/// <summary>

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace S22.Imap {
+namespace S22.Imap.Bodystructure {
 	/// <summary>
 	/// A helper class for parsing the BODYSTRUCTURE response of an
 	/// IMAP FETCH command more conveniently.
