@@ -22,25 +22,25 @@ namespace S22.Imap {
 	/// </summary>
 	public class ImapClient : IImapClient
 	{
-		Stream stream;
-		TcpClient client;
-		bool disposed;
-		readonly object readLock = new object();
-		readonly object writeLock = new object();
-		readonly object sequenceLock = new object();
-		string[] capabilities;
-		int tag = 0;
-		string selectedMailbox;
-		string defaultMailbox = "INBOX";
-		event EventHandler<IdleMessageEventArgs> newMessageEvent;
-		event EventHandler<IdleMessageEventArgs> messageDeleteEvent;
-		bool hasEvents => newMessageEvent != null || messageDeleteEvent != null;
-	    bool idling;
-		Thread idleThread, idleDispatch;
-		int pauseRefCount = 0;
-		SafeQueue<string> idleEvents = new SafeQueue<string>();
-		System.Timers.Timer noopTimer = new System.Timers.Timer();
-		static readonly TraceSource ts = new TraceSource("S22.Imap");
+		Stream _stream;
+		TcpClient _client;
+		bool _disposed;
+		readonly object _readLock = new object();
+		readonly object _writeLock = new object();
+		readonly object _sequenceLock = new object();
+		string[] _capabilities;
+		int _tag = 0;
+		string _selectedMailbox;
+		string _defaultMailbox = "INBOX";
+		event EventHandler<IdleMessageEventArgs> NewMessageEvent;
+		event EventHandler<IdleMessageEventArgs> MessageDeleteEvent;
+		bool HasEvents => NewMessageEvent != null || MessageDeleteEvent != null;
+	    bool _idling;
+		Thread _idleThread, _idleDispatch;
+		int _pauseRefCount = 0;
+		SafeQueue<string> _idleEvents = new SafeQueue<string>();
+		System.Timers.Timer _noopTimer = new System.Timers.Timer();
+		static readonly TraceSource Ts = new TraceSource("S22.Imap");
 
 		/// <summary>
 		/// The default mailbox to operate on.
@@ -52,10 +52,10 @@ namespace S22.Imap {
 		/// <remarks>The default value for this property is "INBOX" which is a special name reserved
 		/// to mean "the primary mailbox for this user on this server".</remarks>
 		public string DefaultMailbox {
-			get => defaultMailbox;
+			get => _defaultMailbox;
 		    set {
 				value.ThrowIfNullOrEmpty();
-				defaultMailbox = value;
+				_defaultMailbox = value;
 			}
 		}
 
@@ -78,12 +78,12 @@ namespace S22.Imap {
 		/// <include file='Examples.xml' path='S22/Imap/ImapClient[@name="NewMessage"]/*'/>
 		public event EventHandler<IdleMessageEventArgs> NewMessage {
 			add {
-				newMessageEvent += value;
+				NewMessageEvent += value;
 				StartIdling();
 			}
 			remove {
-				newMessageEvent -= value;
-				if (!hasEvents)
+				NewMessageEvent -= value;
+				if (!HasEvents)
 					StopIdling();
 			}
 		}
@@ -99,12 +99,12 @@ namespace S22.Imap {
 		/// <include file='Examples.xml' path='S22/Imap/ImapClient[@name="MessageDeleted"]/*'/>
 		public event EventHandler<IdleMessageEventArgs> MessageDeleted {
 			add {
-				messageDeleteEvent += value;
+				MessageDeleteEvent += value;
 				StartIdling();
 			}
 			remove {
-				messageDeleteEvent -= value;
-				if (!hasEvents)
+				MessageDeleteEvent -= value;
+				if (!HasEvents)
 					StopIdling();
 			}
 		}
@@ -123,7 +123,7 @@ namespace S22.Imap {
 		/// </summary>
 		/// <param name="stream">A stream to initialize the ImapClient instance with.</param>
 		internal ImapClient(Stream stream) {
-			this.stream = stream;
+			this._stream = stream;
 			Authed = true;
 		}
 
@@ -212,17 +212,17 @@ namespace S22.Imap {
 		/// <exception cref="System.Security.Authentication.AuthenticationException">An authentication
 		/// error occured while trying to establish a secure connection.</exception>
 		void Connect(string hostname, int port, bool ssl, RemoteCertificateValidationCallback validate) {
-			client = new TcpClient(hostname, port);
-			stream = client.GetStream();
+			_client = new TcpClient(hostname, port);
+			_stream = _client.GetStream();
 			if (ssl) {
-				SslStream sslStream = new SslStream(stream, false, validate ??
+				SslStream sslStream = new SslStream(_stream, false, validate ??
 					((sender, cert, chain, err) => true));
 				sslStream.AuthenticateAsClient(hostname);
-				stream = sslStream;
+				_stream = sslStream;
 			}
 			// The server issues an untagged OK greeting upon connect.
 			string greeting = GetResponse();
-			if (!IsResponseOK(greeting))
+			if (!IsResponseOk(greeting))
 				throw new BadServerResponseException(greeting);
 		}
 
@@ -232,7 +232,7 @@ namespace S22.Imap {
 		/// <param name="response">A response string received from the server.</param>
 		/// <param name="tag">A tag if the response is associated with a command.</param>
 		/// <returns>true if the response is a valid IMAP OK response; Otherwise false.</returns>
-		bool IsResponseOK(string response, string tag = null) {
+		bool IsResponseOk(string response, string tag = null) {
 			if (tag != null)
 				return response.StartsWith(tag + "OK");
 			string v = response.Substring(response.IndexOf(' ')).Trim();
@@ -279,11 +279,11 @@ namespace S22.Imap {
 			}
 			// The server may include an untagged CAPABILITY line in the response.
 			if (response.StartsWith("* CAPABILITY")) {
-				capabilities = response.Substring(13).Trim().Split(' ')
+				_capabilities = response.Substring(13).Trim().Split(' ')
 					.Select(s => s.ToUpperInvariant()).ToArray();
 				response = GetResponse();
 			}
-			if (!IsResponseOK(response, tag))
+			if (!IsResponseOk(response, tag))
 				throw new InvalidCredentialsException(response);
 			Authed = true;
 		}
@@ -306,7 +306,7 @@ namespace S22.Imap {
 			foreach (string m in methods) {
 				try {
 					string response = Authenticate(tag, username, password, m);
-					if (IsResponseOK(response, tag) || response.StartsWith("* CAPABILITY"))
+					if (IsResponseOk(response, tag) || response.StartsWith("* CAPABILITY"))
 						return response;
 				} catch {
 					// Go on with next method.
@@ -351,7 +351,7 @@ namespace S22.Imap {
 				throw new NotSupportedException("The requested authentication " +
 					"mechanism is not supported by the server.");
 			}
-			using (FilterStream fs = new FilterStream(stream, true)) {
+			using (FilterStream fs = new FilterStream(_stream, true)) {
 				using (NegotiateStream ns = new NegotiateStream(fs, true)) {
 					try {
 						ns.AuthenticateAsClient(
@@ -435,14 +435,14 @@ namespace S22.Imap {
 			AssertValid(false);
 			if (!Authed)
 				return;
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				StopIdling();
 				string tag = GetTag();
 				string bye = SendCommandGetResponse(tag + "LOGOUT");
 				if (!bye.StartsWith("* BYE"))
 					throw new BadServerResponseException(bye);
 				string response = GetResponse();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				Authed = false;
 			}
@@ -453,8 +453,8 @@ namespace S22.Imap {
 		/// </summary>
 		/// <returns>A unique identifier string.</returns>
 		string GetTag() {
-			Interlocked.Increment(ref tag);
-			return string.Format("xm{0:000} ", tag);
+			Interlocked.Increment(ref _tag);
+			return string.Format("xm{0:000} ", _tag);
 		}
 
 		/// <summary>
@@ -464,12 +464,12 @@ namespace S22.Imap {
 		/// <param name="command">The command to send to the server. The string is suffixed by CRLF
 		/// prior to sending.</param>
 		void SendCommand(string command) {
-			ts.TraceInformation("C -> " + command);
+			Ts.TraceInformation("C -> " + command);
 			// We can safely use UTF-8 here since it's backwards compatible with ASCII and comes in handy
 			// when sending strings in literal form (see RFC 3501, 4.3).
 			byte[] bytes = Encoding.UTF8.GetBytes(command + "\r\n");
-			lock (writeLock) {
-				stream.Write(bytes, 0, bytes.Length);
+			lock (_writeLock) {
+				_stream.Write(bytes, 0, bytes.Length);
 			}
 		}
 
@@ -483,8 +483,8 @@ namespace S22.Imap {
 		/// server (Refer to RFC 3501 Section 4.3 for details).</param>
 		/// <returns>The response received by the server.</returns>
 		string SendCommandGetResponse(string command, bool resolveLiterals = true) {
-			lock (readLock) {
-				lock (writeLock) {
+			lock (_readLock) {
+				lock (_writeLock) {
 					SendCommand(command);
 				}
 				return GetResponse(resolveLiterals);
@@ -500,17 +500,17 @@ namespace S22.Imap {
 		/// <exception cref="IOException">The underlying socket is closed or there was a failure
 		/// reading from the network.</exception>
 		string GetResponse(bool resolveLiterals = true) {
-			const int Newline = 10, CarriageReturn = 13;
+			const int newline = 10, carriageReturn = 13;
 			using (var mem = new MemoryStream()) {
-				lock (readLock) {
+				lock (_readLock) {
 					while (true) {
-						int i = stream.ReadByte();
+						int i = _stream.ReadByte();
 						if (i == -1)
 							throw new IOException("The stream could not be read.");
 						byte b = (byte)i;
-						if (b == CarriageReturn)
+						if (b == carriageReturn)
 							continue;
-						if (b == Newline) {
+						if (b == newline) {
 							string s = Encoding.ASCII.GetString(mem.ToArray());
 							if (resolveLiterals) {
 								s = Regex.Replace(s, @"{(\d+)}$", m => {
@@ -518,7 +518,7 @@ namespace S22.Imap {
 										"\"" + GetResponse(false);
 								});
 							}
-							ts.TraceInformation("S -> " + s);
+							Ts.TraceInformation("S -> " + s);
 							return s;
 						} else
 							mem.WriteByte(b);
@@ -538,16 +538,16 @@ namespace S22.Imap {
 		string GetData(int byteCount) {
 			byte[] buffer = new byte[4096];
 			using (var mem = new MemoryStream()) {
-				lock (readLock) {
+				lock (_readLock) {
 					while (byteCount > 0) {
 						int request = byteCount > buffer.Length ? buffer.Length : byteCount;
-						int read = stream.Read(buffer, 0, request);
+						int read = _stream.Read(buffer, 0, request);
 						mem.Write(buffer, 0, read);
 						byteCount = byteCount - read;
 					}
 				}
 				string s = Encoding.ASCII.GetString(mem.ToArray());
-				ts.TraceInformation("S -> " + s);
+				Ts.TraceInformation("S -> " + s);
 				return s;
 			}
 		}
@@ -566,9 +566,9 @@ namespace S22.Imap {
 		/// <remarks>This method may be called in non-authenticated state.</remarks>
 		public IEnumerable<string> Capabilities() {
 			AssertValid(false);
-			if (capabilities != null)
-				return capabilities;
-			lock (sequenceLock) {
+			if (_capabilities != null)
+				return _capabilities;
+			lock (_sequenceLock) {
 				if(Authed)
 					PauseIdling();
 				string tag = GetTag();
@@ -577,16 +577,16 @@ namespace S22.Imap {
 				while (response.StartsWith("*")) {
 					// The server is required to issue an untagged capability response.
 					if (response.StartsWith("* CAPABILITY ")) {
-						capabilities = response.Substring(13).Trim().Split(' ')
+						_capabilities = response.Substring(13).Trim().Split(' ')
 							.Select(s => s.ToUpperInvariant()).ToArray();
 					}
 					response = GetResponse();
 				}
 				if(Authed)
 					ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
-				return capabilities;
+				return _capabilities;
 			}
 		}
 
@@ -608,7 +608,7 @@ namespace S22.Imap {
 		public bool Supports(string capability) {
 			AssertValid(false);
 			capability.ThrowIfNull("capability");
-			return (capabilities ?? Capabilities()).Contains(capability,
+			return (_capabilities ?? Capabilities()).Contains(capability,
 				StringComparer.InvariantCultureIgnoreCase);
 		}
 
@@ -630,14 +630,14 @@ namespace S22.Imap {
 			AssertValid();
 			mailbox.ThrowIfNull("mailbox");
 			newName.ThrowIfNull("newName");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "RENAME " +
 					Util.UTF7Encode(mailbox).QuoteString() + " " +
 					Util.UTF7Encode(newName).QuoteString());
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -658,13 +658,13 @@ namespace S22.Imap {
 		public void DeleteMailbox(string mailbox) {
 			AssertValid();
 			mailbox.ThrowIfNull("mailbox");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "DELETE " +
 					Util.UTF7Encode(mailbox).QuoteString());
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -685,13 +685,13 @@ namespace S22.Imap {
 		public void CreateMailbox(string mailbox) {
 			AssertValid();
 			mailbox.ThrowIfNull("mailbox");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "CREATE " +
 					Util.UTF7Encode(mailbox).QuoteString());
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -713,19 +713,19 @@ namespace S22.Imap {
 		void SelectMailbox(string mailbox) {
 			AssertValid();
 			if (mailbox == null)
-				mailbox = defaultMailbox;
+				mailbox = _defaultMailbox;
 			// The requested mailbox is already selected.
-			if (selectedMailbox == mailbox)
+			if (_selectedMailbox == mailbox)
 				return;
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "SELECT " +
 					Util.UTF7Encode(mailbox).QuoteString());
 				while (response.StartsWith("*"))
 					response = GetResponse();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
-				selectedMailbox = mailbox;
+				_selectedMailbox = mailbox;
 			}
 		}
 
@@ -746,7 +746,7 @@ namespace S22.Imap {
 		/// for this user on this server".</remarks>
 		public IEnumerable<string> ListMailboxes() {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				List<string> mailboxes = new List<string>();
 				string tag = GetTag();
@@ -775,7 +775,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return mailboxes;
 			}
@@ -798,7 +798,7 @@ namespace S22.Imap {
 		/// <seealso cref="DeleteMessage"/>
 		public void Expunge(string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
@@ -808,7 +808,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -835,10 +835,10 @@ namespace S22.Imap {
 		public MailboxInfo GetMailboxInfo(string mailbox = null) {
 			AssertValid();
 			// This is not a cheap method to call, it involves a couple of round-trips to the server.
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				if (mailbox == null)
-					mailbox = defaultMailbox;
+					mailbox = _defaultMailbox;
 				MailboxStatus status = GetMailboxStatus(mailbox);
 				// Collect quota information if the server supports it.
 				ulong used = 0, free = 0;
@@ -888,10 +888,10 @@ namespace S22.Imap {
 			};
 			List<MailboxFlag> list = new List<MailboxFlag>();
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				if (mailbox == null)
-					mailbox = defaultMailbox;
+					mailbox = _defaultMailbox;
 				string tag = GetTag();
 				// Use XLIST if server supports it, otherwise at least try LIST and hope server implements
 				// the "LIST Extension for Special-Use Mailboxes" (Refer to RFC6154).
@@ -910,7 +910,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 			return list;
@@ -935,10 +935,10 @@ namespace S22.Imap {
 			AssertValid();
 			int messages = 0, unread = 0;
 			uint uid = 0;
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				if (mailbox == null)
-					mailbox = defaultMailbox;
+					mailbox = _defaultMailbox;
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "STATUS " +
 					Util.UTF7Encode(mailbox).QuoteString() + " (MESSAGES UNSEEN UIDNEXT)");
@@ -955,7 +955,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 			return new MailboxStatus(messages, unread, uid);
@@ -987,15 +987,15 @@ namespace S22.Imap {
 		public IEnumerable<uint> Search(SearchCondition criteria, string mailbox = null) {
 			AssertValid();
 			criteria.ThrowIfNull("criteria");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag(), str = criteria.ToString();
 				StringReader reader = new StringReader(str);
-				bool useUTF8 = str.Contains("\r\n");
+				bool useUtf8 = str.Contains("\r\n");
 				string line = reader.ReadLine();
 				string response = SendCommandGetResponse(tag + "UID SEARCH " +
-					(useUTF8 ? "CHARSET UTF-8 " : "") + line);
+					(useUtf8 ? "CHARSET UTF-8 " : "") + line);
 				// If our search string consists of multiple lines, we're sending some strings in literal
 				// form and need to issue continuation requests.
 				while ((line = reader.ReadLine()) != null) {
@@ -1020,7 +1020,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return result.ToArray();
 			}
@@ -1132,7 +1132,7 @@ namespace S22.Imap {
 			bool seen = true, string mailbox = null) {
 			AssertValid();
 			callback.ThrowIfNull("callback");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string header = GetMailHeader(uid, seen, mailbox);
@@ -1290,10 +1290,10 @@ namespace S22.Imap {
 			AssertValid();
 			message.ThrowIfNull("message");
 			string mime822 = message.ToMIME822();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				if (mailbox == null)
-					mailbox = defaultMailbox;
+					mailbox = _defaultMailbox;
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "APPEND " +
 					Util.UTF7Encode(mailbox).QuoteString() + (seen ? @" (\Seen)" : "") +
@@ -1306,9 +1306,9 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse(); 
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
-				return GetHighestUID(mailbox);
+				return GetHighestUid(mailbox);
 			}
 		}
 
@@ -1367,7 +1367,7 @@ namespace S22.Imap {
 		/// state, i.e. before logging in.</exception>
 		string GetMailHeader(uint uid, bool seen = true, string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				StringBuilder builder = new StringBuilder();
@@ -1386,7 +1386,7 @@ namespace S22.Imap {
 					response = GetResponse(false);
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return builder.ToString();
 			}
@@ -1413,7 +1413,7 @@ namespace S22.Imap {
 		/// described in some detail in RFC 3501 under 7.4.2 FETCH response.</remarks>
 		string GetBodystructure(uint uid, string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
@@ -1427,7 +1427,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return structure;
 			}
@@ -1456,7 +1456,7 @@ namespace S22.Imap {
 		string GetBodypart(uint uid, string partNumber, bool seen = true,
 			string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				StringBuilder builder = new StringBuilder();
@@ -1480,7 +1480,7 @@ namespace S22.Imap {
 					response = GetResponse(false);
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return builder.ToString();
 			}
@@ -1507,7 +1507,7 @@ namespace S22.Imap {
 		/// state, i.e. before logging in.</exception>
 		string GetMessageData(uint uid, bool seen = true, string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				StringBuilder builder = new StringBuilder();
@@ -1526,7 +1526,7 @@ namespace S22.Imap {
 					response = GetResponse(false);
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return builder.ToString();
 			}
@@ -1547,25 +1547,25 @@ namespace S22.Imap {
 		/// <exception cref="NotAuthenticatedException">The method was called in non-authenticated
 		/// state, i.e. before logging in.</exception>
 		/// <remarks>The highest UID usually corresponds to the newest message in a mailbox.</remarks>
-		uint GetHighestUID(string mailbox = null) {
+		uint GetHighestUid(string mailbox = null) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "STATUS " +
-					Util.UTF7Encode(selectedMailbox).QuoteString() + " (UIDNEXT)");
-				uint nextUID = 0;
+					Util.UTF7Encode(_selectedMailbox).QuoteString() + " (UIDNEXT)");
+				uint nextUid = 0;
 				while (response.StartsWith("*")) {
 					Match m = Regex.Match(response, @"\* STATUS.*UIDNEXT (\d+)");
 					if (m.Success)
-						nextUID = Convert.ToUInt32(m.Groups[1].Value);
+						nextUid = Convert.ToUInt32(m.Groups[1].Value);
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
-				return (nextUID - 1);
+				return (nextUid - 1);
 			}
 		}
 
@@ -1618,7 +1618,7 @@ namespace S22.Imap {
 			uids.ThrowIfNull("uids");
 			destination.ThrowIfNull("destination");
 			string set = Util.BuildSequenceSet(uids);
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
@@ -1627,7 +1627,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -1727,7 +1727,7 @@ namespace S22.Imap {
 			AssertValid();
 			uids.ThrowIfNull("uids");
 			string set = Util.BuildSequenceSet(uids);
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
@@ -1736,7 +1736,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -1773,7 +1773,7 @@ namespace S22.Imap {
 				{ @"\Recent",	MessageFlag.Recent }
 			};
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string tag = GetTag();
@@ -1791,7 +1791,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return flags;
 			}
@@ -1822,7 +1822,7 @@ namespace S22.Imap {
 		/// <seealso cref="RemoveMessageFlags"/>
 		public void SetMessageFlags(uint uid, string mailbox, params MessageFlag[] flags) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string flagsString = "";
@@ -1834,7 +1834,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -1864,7 +1864,7 @@ namespace S22.Imap {
 		/// <seealso cref="RemoveMessageFlags"/>
 		public void AddMessageFlags(uint uid, string mailbox, params MessageFlag[] flags) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string flagsString = "";
@@ -1876,7 +1876,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -1906,7 +1906,7 @@ namespace S22.Imap {
 		/// <seealso cref="AddMessageFlags"/>
 		public void RemoveMessageFlags(uint uid, string mailbox, params MessageFlag[] flags) {
 			AssertValid();
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				SelectMailbox(mailbox);
 				string flagsString = "";
@@ -1918,7 +1918,7 @@ namespace S22.Imap {
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -1943,11 +1943,11 @@ namespace S22.Imap {
 		/// <seealso cref="PauseIdling"/>
 		/// <seealso cref="ResumeIdling"/>
 		void StartIdling() {
-			if (idling)
+			if (_idling)
 				return;
 			if (!Supports("IDLE"))
 				throw new InvalidOperationException("The server does not support the IMAP4 IDLE command.");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				// Make sure the default mailbox is selected.
 				SelectMailbox(null);
 				string tag = GetTag();
@@ -1957,16 +1957,16 @@ namespace S22.Imap {
 					throw new BadServerResponseException(response);
 			}
 			// Setup and start the idle thread.
-			if (idleThread != null)
+			if (_idleThread != null)
 				throw new ApplicationException("idleThread is not null.");
-			idling = true;
-			idleThread = new Thread(IdleLoop);
-			idleThread.IsBackground = true;
-			idleThread.Start();
+			_idling = true;
+			_idleThread = new Thread(IdleLoop);
+			_idleThread.IsBackground = true;
+			_idleThread.Start();
 			// Setup a timer to issue NOOPs every once in a while.
-			noopTimer.Interval = 1000 * 60 * 10;
-			noopTimer.Elapsed += IssueNoop;
-			noopTimer.Start();
+			_noopTimer.Interval = 1000 * 60 * 10;
+			_noopTimer.Elapsed += IssueNoop;
+			_noopTimer.Start();
 		}
 
 		/// <summary>
@@ -1987,14 +1987,14 @@ namespace S22.Imap {
 		/// <seealso cref="PauseIdling"/>
 		void StopIdling() {
 			AssertValid();
-			if (!idling)
+			if (!_idling)
 				return;
 			SendCommand("DONE");
 			// Wait until the idle thread has shutdown.
-			idleThread.Join();
-			idleThread = null;
-			idling = false;
-			noopTimer.Stop();
+			_idleThread.Join();
+			_idleThread = null;
+			_idling = false;
+			_noopTimer.Stop();
 		}
 
 		/// <summary>
@@ -2016,10 +2016,10 @@ namespace S22.Imap {
 		/// <seealso cref="ResumeIdling"/>
 		void PauseIdling() {
 			AssertValid();
-			if (!idling)
+			if (!_idling)
 				return;
-			pauseRefCount = pauseRefCount + 1;
-			if (pauseRefCount != 1)
+			_pauseRefCount = _pauseRefCount + 1;
+			if (_pauseRefCount != 1)
 				return;
 			// Send a "DONE" continuation-command to indicate we no longer want to receive idle
 			// notifications. The server response is consumed by the idle thread and signals it to
@@ -2027,8 +2027,8 @@ namespace S22.Imap {
 			SendCommand("DONE");
 
 			// Wait until the idle thread has shutdown.
-			idleThread.Join();
-			idleThread = null;
+			_idleThread.Join();
+			_idleThread = null;
 		}
 
 		/// <summary>
@@ -2048,13 +2048,13 @@ namespace S22.Imap {
 		/// <seealso cref="StopIdling"/>
 		void ResumeIdling() {
 			AssertValid();
-			if (!idling)
+			if (!_idling)
 				return;
-			pauseRefCount = pauseRefCount - 1;
-			if (pauseRefCount != 0)
+			_pauseRefCount = _pauseRefCount - 1;
+			if (_pauseRefCount != 0)
 				return;
 			// Make sure the default mailbox is selected.
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				SelectMailbox(null);
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "IDLE");
@@ -2063,11 +2063,11 @@ namespace S22.Imap {
 					throw new BadServerResponseException(response);
 			}
 			// Setup and start the idle thread.
-			if (idleThread != null)
+			if (_idleThread != null)
 				throw new ApplicationException("idleThread is not null.");
-			idleThread = new Thread(IdleLoop);
-			idleThread.IsBackground = true;
-			idleThread.Start();
+			_idleThread = new Thread(IdleLoop);
+			_idleThread.IsBackground = true;
+			_idleThread.Start();
 		}
 
 		/// <summary>
@@ -2076,10 +2076,10 @@ namespace S22.Imap {
 		/// notifications are being received.
 		/// </summary>
 		void IdleLoop() {
-			if (idleDispatch == null) {
-				idleDispatch = new Thread(EventDispatcher);
-				idleDispatch.IsBackground = true;
-				idleDispatch.Start();
+			if (_idleDispatch == null) {
+				_idleDispatch = new Thread(EventDispatcher);
+				_idleDispatch.IsBackground = true;
+				_idleDispatch.Start();
 			}
 
 			while (true) {
@@ -2090,7 +2090,7 @@ namespace S22.Imap {
 						return;
 					// Let the dispatcher thread take care of the IDLE notification so we can go back to
 					// receiving responses.
-					idleEvents.Enqueue(response);
+					_idleEvents.Enqueue(response);
 				} catch (IOException e) {
 					// Closing _Stream or the underlying _Connection instance will cause a
 					// WSACancelBlockingCall exception on a blocking socket. This is not an error so just let
@@ -2106,9 +2106,9 @@ namespace S22.Imap {
 						return;
 					// Otherwise shutdown and raise the IdleError event to let the user know something
 					// went wrong.
-					idleThread = null;
-					idling = false;
-					noopTimer.Stop();
+					_idleThread = null;
+					_idling = false;
+					_noopTimer.Stop();
 					try {
 						IdleError.Raise(this, new IdleErrorEventArgs(e, this));
 					} catch {
@@ -2125,22 +2125,22 @@ namespace S22.Imap {
 		void EventDispatcher() {
 			uint lastUid = 0;
 			while (true) {
-				string response = idleEvents.Dequeue();
+				string response = _idleEvents.Dequeue();
 				Match m = Regex.Match(response, @"\*\s+(\d+)\s+(\w+)");
 				if (!m.Success)
 					continue;
 				try {
 					uint numberOfMessages = Convert.ToUInt32(m.Groups[1].Value),
-						uid = GetHighestUID();
+						uid = GetHighestUid();
 					switch (m.Groups[2].Value.ToUpper()) {
 						case "EXISTS":
 							if (lastUid != uid) {
-								newMessageEvent.Raise(this,
+								NewMessageEvent.Raise(this,
 									new IdleMessageEventArgs(numberOfMessages, uid, this));
 							}
 							break;
 						case "EXPUNGE":
-							messageDeleteEvent.Raise(
+							MessageDeleteEvent.Raise(
 								this, new IdleMessageEventArgs(numberOfMessages, uid, this));
 							break;
 					}
@@ -2159,14 +2159,14 @@ namespace S22.Imap {
 		/// connection is still active.
 		/// </remarks>
 		void IssueNoop(object sender, ElapsedEventArgs e) {
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "NOOP");
 				while (response.StartsWith("*"))
 					response = GetResponse();
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 			}
 		}
@@ -2194,7 +2194,7 @@ namespace S22.Imap {
 			if (!Supports("QUOTA"))
 				throw new InvalidOperationException(
 					"This server does not support the IMAP4 QUOTA extension.");
-			lock (sequenceLock) {
+			lock (_sequenceLock) {
 				PauseIdling();
 				if (mailbox == null)
 					mailbox = DefaultMailbox;
@@ -2217,7 +2217,7 @@ namespace S22.Imap {
 					response = GetResponse();
 				}
 				ResumeIdling();
-				if (!IsResponseOK(response, tag))
+				if (!IsResponseOk(response, tag))
 					throw new BadServerResponseException(response);
 				return quotas;
 			}
@@ -2237,25 +2237,25 @@ namespace S22.Imap {
 		/// </summary>
 		/// <param name="disposing">true to dispose of managed resources, otherwise false.</param>
 		protected virtual void Dispose(bool disposing) {
-			if (!disposed) {
+			if (!_disposed) {
 				// Indicate that the instance has been disposed.
-				disposed = true;
+				_disposed = true;
 				// Get rid of managed resources.
 				if (disposing) {
-					if (idleThread != null) {
-						idleThread.Abort();
-						idleThread = null;
+					if (_idleThread != null) {
+						_idleThread.Abort();
+						_idleThread = null;
 					}
-					if (idleDispatch != null) {
-						idleDispatch.Abort();
-						idleDispatch = null;
+					if (_idleDispatch != null) {
+						_idleDispatch.Abort();
+						_idleDispatch = null;
 					}
-					noopTimer.Stop();
-					stream.Close();
-					stream = null;
-					if (client != null)
-						client.Close();
-					client = null;
+					_noopTimer.Stop();
+					_stream.Close();
+					_stream = null;
+					if (_client != null)
+						_client.Close();
+					_client = null;
 				}
 				// Get rid of unmanaged resources.
 			}
@@ -2269,7 +2269,7 @@ namespace S22.Imap {
 		/// <exception cref="NotAuthenticatedException">The method was called in non-authenticated
 		/// state, i.e. before logging in.</exception>
 		void AssertValid(bool requireAuth = true) {
-			if (disposed)
+			if (_disposed)
 				throw new ObjectDisposedException(GetType().FullName);
 			if(requireAuth && !Authed)
 					throw new NotAuthenticatedException();

@@ -41,7 +41,7 @@ namespace S22.Imap.Bodystructure {
 		/// Maps MIME content disposition string values to their corresponding
 		/// counter-parts of the ContentDispositionType enumeration.
 		/// </summary>
-		static internal Dictionary<string, ContentDispositionType> Map =
+		internal static Dictionary<string, ContentDispositionType> Map =
 			new Dictionary<string, ContentDispositionType>(StringComparer.OrdinalIgnoreCase) {
 			{ "Inline", ContentDispositionType.Inline },
 			{ "Attachment",	ContentDispositionType.Attachment }

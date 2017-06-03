@@ -39,7 +39,7 @@ namespace S22.Imap.Bodystructure {
 		/// A Reader object initialized with the string containing the bodystructure
 		/// response.
 		/// </summary>
-		private Reader reader;
+		private readonly Reader reader;
 
 		/// <summary>
 		/// Initializes a new instance of the Bodystructure class.

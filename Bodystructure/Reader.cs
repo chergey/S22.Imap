@@ -187,7 +187,7 @@ namespace S22.Imap.Bodystructure {
 		/// <exception cref="EndOfStringException">Thrown when reading is
 		/// attempted past the end of the underlying string.</exception>
 		public ContentDisposition ReadDisposition() {
-			ContentDisposition Disp = new ContentDisposition();
+			ContentDisposition disp = new ContentDisposition();
 			char c;
 			char[] last = new char[3];
 			while ((c = (char)Read()) != '(') {
@@ -195,17 +195,17 @@ namespace S22.Imap.Bodystructure {
 				last[1] = last[2];
 				last[2] = c;
 				if ((new string(last)) == "NIL")
-					return Disp;
+					return disp;
 			}
 
 			string type = ReadWord();
-			Disp.Type = ContentDispositionTypeMap.fromString(type);
-			Disp.Attributes = ReadList();
+			disp.Type = ContentDispositionTypeMap.fromString(type);
+			disp.Attributes = ReadList();
 			ReadUntil(')');
 
-			if (Disp.Attributes.ContainsKey("Filename"))
-				Disp.Filename = Disp.Attributes["Filename"];
-			return Disp;
+			if (disp.Attributes.ContainsKey("Filename"))
+				disp.Filename = disp.Attributes["Filename"];
+			return disp;
 		}
 	}
 
