@@ -5,7 +5,7 @@ namespace S22.Imap.Auth.Sasl {
 	/// <summary>
 	/// The exception is thrown when a Sasl-related error or unexpected condition occurs.
 	/// </summary>
-	[Serializable()]
+	[Serializable]
 	internal class SaslException : Exception {
 		/// <summary>
 		/// Initializes a new instance of the SaslException class

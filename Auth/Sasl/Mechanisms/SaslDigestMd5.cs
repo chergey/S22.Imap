@@ -25,46 +25,30 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// True if the authentication exchange between client and server
 		/// has been completed.
 		/// </summary>
-		public override bool IsCompleted {
-			get {
-				return Completed;
-			}
-		}
+		public override bool IsCompleted => Completed;
 
-		/// <summary>
+	    /// <summary>
 		/// The IANA name for the Digest-Md5 authentication mechanism as described
 		/// in RFC 2195.
 		/// </summary>
-		public override string Name {
-			get {
-				return "DIGEST-MD5";
-			}
-		}
+		public override string Name => "DIGEST-MD5";
 
-		/// <summary>
+	    /// <summary>
 		/// The username to authenticate with.
 		/// </summary>
 		string Username {
-			get {
-				return Properties.ContainsKey("Username") ?
-					Properties["Username"] as string : null;
-			}
-			set {
-				Properties["Username"] = value;
-			}
-		}
+			get => Properties.ContainsKey("Username") ?
+			    Properties["Username"] as string : null;
+	        set => Properties["Username"] = value;
+	    }
 
 		/// <summary>
 		/// The password to authenticate with.
 		/// </summary>
 		string Password {
-			get {
-				return Properties.ContainsKey("Password") ?
-					Properties["Password"] as string : null;
-			}
-			set {
-				Properties["Password"] = value;
-			}
+			get => Properties.ContainsKey("Password") ?
+			    Properties["Password"] as string : null;
+		    set => Properties["Password"] = value;
 		}
 
 		/// <summary>

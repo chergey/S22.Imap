@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using S22.Imap.Enums;
 
 namespace S22.Imap {
 	/// <summary>

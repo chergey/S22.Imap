@@ -18,45 +18,29 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// True if the authentication exchange between client and server
 		/// has been completed.
 		/// </summary>
-		public override bool IsCompleted {
-			get {
-				return Completed;
-			}
-		}
+		public override bool IsCompleted => Completed;
 
-		/// <summary>
+	    /// <summary>
 		/// The IANA name for the OAuth 2.0 authentication mechanism.
 		/// </summary>
-		public override string Name {
-			get {
-				return "XOAUTH2";
-			}
-		}
+		public override string Name => "XOAUTH2";
 
-		/// <summary>
+	    /// <summary>
 		/// The username to authenticate with.
 		/// </summary>
 		string Username {
-			get {
-				return Properties.ContainsKey("Username") ?
-					Properties["Username"] as string : null;
-			}
-			set {
-				Properties["Username"] = value;
-			}
-		}
+			get => Properties.ContainsKey("Username") ?
+			    Properties["Username"] as string : null;
+	        set => Properties["Username"] = value;
+	    }
 
 		/// <summary>
 		/// The access token to authenticate with.
 		/// </summary>
 		string AccessToken {
-			get {
-				return Properties.ContainsKey("AccessToken") ?
-					Properties["AccessToken"] as string : null;
-			}
-			set {
-				Properties["AccessToken"] = value;
-			}
+			get => Properties.ContainsKey("AccessToken") ?
+			    Properties["AccessToken"] as string : null;
+		    set => Properties["AccessToken"] = value;
 		}
 
 		/// <summary>

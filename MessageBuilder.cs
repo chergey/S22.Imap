@@ -20,8 +20,8 @@ namespace S22.Imap {
 		/// <returns>A MailMessage instance with initialized Header fields but without any
 		/// content.</returns>
 		internal static MailMessage FromHeader(string text) {
-			NameValueCollection header = ParseMailHeader(text);
-			MailMessage m = new MailMessage();
+			var header = ParseMailHeader(text);
+			var m = new MailMessage();
 			foreach (string key in header) {
 				string value = header.GetValues(key)[0];
 				try {
@@ -63,8 +63,8 @@ namespace S22.Imap {
 		/// <remarks>This is used when fetching entire messages instead of the partial-fetch mechanism
 		/// because it saves redundant round-trips to the server.</remarks>
 		internal static MailMessage FromMIME822(string text) {
-			StringReader reader = new StringReader(text);
-			StringBuilder header = new StringBuilder();
+			var reader = new StringReader(text);
+			var header = new StringBuilder();
 			string line;
 			while (!string.IsNullOrEmpty(line = reader.ReadLine()))
 				header.AppendLine(line);
@@ -82,8 +82,8 @@ namespace S22.Imap {
 		/// <returns>A NameValueCollection containing the header fields as keys with their respective
 		/// values as values.</returns>
 		internal static NameValueCollection ParseMailHeader(string header) {
-			StringReader reader = new StringReader(header);
-			NameValueCollection coll = new NameValueCollection();
+			var reader = new StringReader(header);
+			var coll = new NameValueCollection();
 			string line, fieldname = null, fieldvalue = null;
 			var exclude = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) {
 				"Subject", "Comments", "Content-disposition", "User-Agent" };

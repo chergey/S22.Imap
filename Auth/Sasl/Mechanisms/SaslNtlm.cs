@@ -20,45 +20,29 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// True if the authentication exchange between client and server
 		/// has been completed.
 		/// </summary>
-		public override bool IsCompleted {
-			get {
-				return completed;
-			}
-		}
+		public override bool IsCompleted => completed;
 
-		/// <summary>
+	    /// <summary>
 		/// The IANA name for the NTLM authentication mechanism.
 		/// </summary>
-		public override string Name {
-			get {
-				return "NTLM";
-			}
-		}
+		public override string Name => "NTLM";
 
-		/// <summary>
+	    /// <summary>
 		/// The username to authenticate with.
 		/// </summary>
 		protected string Username {
-			get {
-				return Properties.ContainsKey("Username") ?
-					Properties["Username"] as string : null;
-			}
-			set {
-				Properties["Username"] = value;
-			}
-		}
+			get => Properties.ContainsKey("Username") ?
+			    Properties["Username"] as string : null;
+	        set => Properties["Username"] = value;
+	    }
 
 		/// <summary>
 		/// The password to authenticate with.
 		/// </summary>
 		protected string Password {
-			get {
-				return Properties.ContainsKey("Password") ?
-					Properties["Password"] as string : null;
-			}
-			set {
-				Properties["Password"] = value;
-			}
+			get => Properties.ContainsKey("Password") ?
+			    Properties["Password"] as string : null;
+		    set => Properties["Password"] = value;
 		}
 
 		/// <summary>

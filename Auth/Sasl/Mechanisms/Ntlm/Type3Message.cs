@@ -35,15 +35,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the LM challenge response data starts.
 		/// </summary>
-		int LMOffset {
-			get {
-				// We send a version 3 NTLM type 3 message so the start of the data
-				// block is at offset 72.
-				return 72;
-			}
-		}
+		int LMOffset => 72;
 
-		/// <summary>
+	    /// <summary>
 		/// The NTLM challenge response.
 		/// </summary>
 		byte[] NtlmResponse {
@@ -54,13 +48,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the NTLM challenge response data starts.
 		/// </summary>
-		int NtlmOffset {
-			get {
-				return LMOffset + LMResponse.Length;
-			}
-		}
+		int NtlmOffset => LMOffset + LMResponse.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The authentication realm in which the authenticating account
 		/// has membership.
 		/// </summary>
@@ -72,13 +62,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the target name data starts.
 		/// </summary>
-		int targetOffset {
-			get {
-				return NtlmOffset + NtlmResponse.Length;
-			}
-		}
+		int targetOffset => NtlmOffset + NtlmResponse.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The authenticating account name.
 		/// </summary>
 		byte[] username {
@@ -89,13 +75,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the username data starts.
 		/// </summary>
-		int usernameOffset {
-			get {
-				return targetOffset + targetName.Length;
-			}
-		}
+		int usernameOffset => targetOffset + targetName.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The client workstation's name.
 		/// </summary>
 		byte[] workstation {
@@ -106,13 +88,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the client workstation's name data starts.
 		/// </summary>
-		int workstationOffset {
-			get {
-				return usernameOffset + username.Length;
-			}
-		}
+		int workstationOffset => usernameOffset + username.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The session key value which is used by the session security mechanism
 		/// during key exchange.
 		/// </summary>
@@ -124,13 +102,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset at which the session key data starts.
 		/// </summary>
-		int sessionKeyOffset {
-			get {
-				return workstationOffset + workstation.Length;
-			}
-		}
+		int sessionKeyOffset => workstationOffset + workstation.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// Contains the data present in the OS version structure.
 		/// </summary>
 		OSVersion OSVersion {

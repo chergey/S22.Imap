@@ -10,7 +10,8 @@ namespace S22.Imap {
 		/// <summary>
 		/// Initializes a new instance of the BadServerResponseException class
 		/// </summary>
-		public BadServerResponseException() : base() { }
+		public BadServerResponseException()
+		{ }
 		/// <summary>
 		/// Initializes a new instance of the BadServerResponseException class with its message
 		/// string set to <paramref name="message"/>.

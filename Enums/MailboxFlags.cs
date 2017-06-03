@@ -1,4 +1,4 @@
-﻿namespace S22.Imap {
+﻿namespace S22.Imap.Enums {
 	/// <summary>
 	/// Defines possible attributes for mailboxes.
 	/// </summary>

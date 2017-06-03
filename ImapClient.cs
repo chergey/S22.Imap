@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
 using S22.Imap.Bodystructure;
+using S22.Imap.Enums;
 
 namespace S22.Imap {
 	/// <summary>
@@ -854,7 +855,7 @@ namespace S22.Imap {
 				// Try to collect special-use flags.
 				IEnumerable<MailboxFlag> flags = GetMailboxFlags(mailbox);
 				ResumeIdling();
-				return new MailboxInfo(mailbox, flags, status.Messages, status.Unread, status.NextUID,
+				return new MailboxInfo(mailbox, flags, status.Messages, status.Unread, status.NextUid,
 					used, free);
 			}
 		}

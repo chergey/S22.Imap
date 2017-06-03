@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace S22.Imap {
+namespace S22.Imap.Enums {
 	/// <summary>
 	/// Represents the status information of a mailbox which can be constructed from the server
 	/// response to a STATUS command.
@@ -11,19 +11,19 @@ namespace S22.Imap {
 		/// Initializes a new MailboxStatus instance with the specified number of total and unread
 		/// messages.
 		/// </summary>
-		/// <param name="Messages">The total number of messages in the mailbox.</param>
-		/// <param name="Unread">The number of unread (unseen) messages in the mailbox.</param>
-		/// <param name="NextUID">The next unique identifier value of the mailbox</param>
-		internal MailboxStatus(int Messages, int Unread, uint NextUID) {
-			this.Messages = Messages;
-			this.Unread = Unread;
-			this.NextUID = NextUID;
+		/// <param name="messages">The total number of messages in the mailbox.</param>
+		/// <param name="unread">The number of unread (unseen) messages in the mailbox.</param>
+		/// <param name="nextUid">The next unique identifier value of the mailbox</param>
+		internal MailboxStatus(int messages, int unread, uint nextUid) {
+			this.Messages = messages;
+			this.Unread = unread;
+			this.NextUid = nextUid;
 		}
 
 		/// <summary>
 		/// The next unique identifier value of the mailbox.
 		/// </summary>
-		internal uint NextUID {
+		internal uint NextUid {
 			get;
 			private set;
 		}

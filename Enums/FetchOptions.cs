@@ -1,4 +1,6 @@
-﻿namespace S22.Imap {
+﻿
+namespace S22.Imap.Enums
+{
 	/// <summary>
 	/// Defines the different means by which mail messages may be fetched from the server.
 	/// </summary>

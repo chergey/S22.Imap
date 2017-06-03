@@ -77,10 +77,8 @@ namespace S22.Imap {
 		/// <param name="args">The event arguments associated with this event.</param>
 		internal static void Raise<T>(this EventHandler<T> @event, object sender, T args)
 			where T : EventArgs {
-			EventHandler<T> handler = @event;
-			if (handler != null)
-				handler(sender, args);
-		}
+            @event?.Invoke(sender, args);
+        }
 
 		/// <summary>
 		/// Throws an ArgumentNullException if the given data item is null.

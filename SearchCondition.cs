@@ -42,10 +42,10 @@ namespace S22.Imap {
 		/// </summary>
 		/// <param name="date">The date to compare the message's internal date with.</param>
 		/// <returns>A SearchCondition object representing the "Before" search criterion.</returns>
-		public static SearchCondition Before(DateTime date) {
-			return new SearchCondition { Field = Fields.Before, Value = date };
-		}
-		/// <summary>
+		public static SearchCondition Before(DateTime date) 
+            => new SearchCondition { Field = Fields.Before, Value = date };
+
+	    /// <summary>
 		/// Finds messages that contain the specified string in the body of the message.
 		/// </summary>
 		/// <param name="text">String to search the message body for.</param>

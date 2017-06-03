@@ -64,58 +64,38 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// True if the authentication exchange between client and server
 		/// has been completed.
 		/// </summary>
-		public override bool IsCompleted {
-			get {
-				return Completed;
-			}
-		}
+		public override bool IsCompleted => Completed;
 
-		/// <summary>
+	    /// <summary>
 		/// The IANA name for the SRP authentication mechanism.
 		/// </summary>
-		public override string Name {
-			get {
-				return "SRP";
-			}
-		}
+		public override string Name => "SRP";
 
-		/// <summary>
+	    /// <summary>
 		/// The username to authenticate with.
 		/// </summary>
 		string Username {
-			get {
-				return Properties.ContainsKey("Username") ?
-					Properties["Username"] as string : null;
-			}
-			set {
-				Properties["Username"] = value;
-			}
-		}
+			get => Properties.ContainsKey("Username") ?
+			    Properties["Username"] as string : null;
+	        set => Properties["Username"] = value;
+	    }
 
 		/// <summary>
 		/// The password to authenticate with.
 		/// </summary>
 		string Password {
-			get {
-				return Properties.ContainsKey("Password") ?
-					Properties["Password"] as string : null;
-			}
-			set {
-				Properties["Password"] = value;
-			}
+			get => Properties.ContainsKey("Password") ?
+			    Properties["Password"] as string : null;
+		    set => Properties["Password"] = value;
 		}
 
 		/// <summary>
 		/// The authorization id (userid in draft jargon).
 		/// </summary>
 		string AuthId {
-			get {
-				return Properties.ContainsKey("AuthId") ?
-					Properties["AuthId"] as string : Username;
-			}
-			set {
-				Properties["AuthId"] = value;
-			}
+			get => Properties.ContainsKey("AuthId") ?
+			    Properties["AuthId"] as string : Username;
+		    set => Properties["AuthId"] = value;
 		}
 
 		/// <summary>

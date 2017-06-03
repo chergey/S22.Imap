@@ -60,7 +60,7 @@ namespace S22.Imap.Auth {
 		/// handed to the NegotiateStream instance in case authentication
 		/// unexpectedly fails.
 		/// </summary>
-		static readonly byte[] errorCode = new byte[] {
+		static readonly byte[] errorCode = {
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xFE
 		};
 
@@ -308,63 +308,39 @@ namespace S22.Imap.Auth {
 		/// Gets a boolean value that indicates whether the underlying stream is
 		/// readable.
 		/// </summary>
-		public override bool CanRead {
-			get {
-				return true;
-			}
-		}
+		public override bool CanRead => true;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets a boolean value that indicates whether the underlying stream is
 		/// seekable.
 		/// </summary>
-		public override bool CanSeek {
-			get {
-				return false;
-			}
-		}
+		public override bool CanSeek => false;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets a boolean value that indicates whether the underlying stream
 		/// supports time-outs.
 		/// </summary>
-		public override bool CanTimeout {
-			get {
-				return innerStream.CanTimeout;
-			}
-		}
+		public override bool CanTimeout => innerStream.CanTimeout;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets a boolean value that indicates whether the underlying stream is
 		/// writable.
 		/// </summary>
-		public override bool CanWrite {
-			get {
-				return true;
-			}
-		}
+		public override bool CanWrite => true;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the length of the underlying stream.
 		/// </summary>
-		public override long Length {
-			get {
-				return innerStream.Length;
-			}
-		}
+		public override long Length => innerStream.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// Gets or sets the current position in the underlying stream.
 		/// </summary>
 		/// <exception cref="NotSupportedException">Setting this property
 		/// is not supported.</exception>
 		public override long Position {
-			get {
-				return innerStream.Position;
-			}
-			set {
-				throw new NotSupportedException();
-			}
+			get => innerStream.Position;
+		    set => throw new NotSupportedException();
 		}
 
 		/// <summary>

@@ -36,14 +36,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset within the message where the domain name data starts.
 		/// </summary>
-		int domainOffset {
-			get {
-				// We send a version 3 NTLM type 1 message.
-				return 40;
-			}
-		}
+		int domainOffset => 40;
 
-		/// <summary>
+	    /// <summary>
 		/// The supplied workstation name as an array of bytes in the
 		/// ASCII range.
 		/// </summary>
@@ -55,22 +50,14 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <summary>
 		/// The offset within the message where the workstation name data starts.
 		/// </summary>
-		int workstationOffset {
-			get {
-				return domainOffset + domain.Length;
-			}
-		}
+		int workstationOffset => domainOffset + domain.Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The length of the supplied workstation name as a 16-bit short value.
 		/// </summary>
-		short workstationLength {
-			get {
-				return Convert.ToInt16(workstation.Length);
-			}
-		}
+		short workstationLength => Convert.ToInt16(workstation.Length);
 
-		/// <summary>
+	    /// <summary>
 		/// Contains information about the client's OS version.
 		/// </summary>
 		OSVersion OSVersion {

@@ -18,13 +18,9 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// The allocated space for the buffer in bytes (typically the same as
 		/// the length).
 		/// </summary>
-		public short AllocatedSpace {
-			get {
-				return Length;
-			}
-		}
+		public short AllocatedSpace => Length;
 
-		/// <summary>
+	    /// <summary>
 		/// The offset from the beginning of the NTLM message to the start of
 		/// the buffer, in bytes.
 		/// </summary>

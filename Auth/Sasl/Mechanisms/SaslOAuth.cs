@@ -12,33 +12,21 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// True if the authentication exchange between client and server
 		/// has been completed.
 		/// </summary>
-		public override bool IsCompleted {
-			get {
-				return Completed;
-			}
-		}
+		public override bool IsCompleted => Completed;
 
-		/// <summary>
+	    /// <summary>
 		/// The IANA name for the OAuth authentication mechanism.
 		/// </summary>
-		public override string Name {
-			get {
-				return "XOAUTH";
-			}
-		}
+		public override string Name => "XOAUTH";
 
-		/// <summary>
+	    /// <summary>
 		/// The access token to authenticate with.
 		/// </summary>
 		string AccessToken {
-			get {
-				return Properties.ContainsKey("AccessToken") ?
-					Properties["AccessToken"] as string : null;
-			}
-			set {
-				Properties["AccessToken"] = value;
-			}
-		}
+			get => Properties.ContainsKey("AccessToken") ?
+			    Properties["AccessToken"] as string : null;
+	        set => Properties["AccessToken"] = value;
+	    }
 
 		/// <summary>
 		/// Private constructor for use with Sasl.SaslFactory.

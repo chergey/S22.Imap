@@ -20,13 +20,9 @@ namespace S22.Imap.Auth {
 		/// <summary>
 		/// The length of the underlying data buffer.
 		/// </summary>
-		public int Length {
-			get {
-				return position;
-			}
-		}
+		public int Length => position;
 
-		/// <summary>
+	    /// <summary>
 		/// Resizes the internal byte buffer.
 		/// </summary>
 		/// <param name="amount">Amount in bytes by which to increase the
