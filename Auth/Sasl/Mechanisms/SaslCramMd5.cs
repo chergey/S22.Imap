@@ -76,7 +76,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslCramMd5(string username, string password) {
 			username.ThrowIfNull("username");
-			if (username == String.Empty)
+			if (username == string.Empty)
 				throw new ArgumentException("The username must not be empty.");
 			password.ThrowIfNull("password");
 
@@ -94,18 +94,18 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		protected override byte[] ComputeResponse(byte[] challenge) {
 			// Precondition: Ensure username and password are not null and
 			// username is not empty.
-			if (String.IsNullOrEmpty(Username) || Password == null) {
+			if (string.IsNullOrEmpty(Username) || Password == null) {
 				throw new SaslException("The username must not be null or empty and " +
 					"the password must not be null.");
 			}
 			// Sasl Cram-Md5 does not involve another roundtrip.
 			Completed = true;
 			// Compute the encrypted challenge as a hex-string.
-			string hex = String.Empty;
+			string hex = string.Empty;
 			using (var hmac = new HMACMD5(Encoding.ASCII.GetBytes(Password))) {
 				byte[] encrypted = hmac.ComputeHash(challenge);
 				hex = BitConverter.ToString(encrypted).ToLower().Replace("-",
-					String.Empty);
+					string.Empty);
 			}
 			return Encoding.ASCII.GetBytes(Username + " " + hex);	
 		}

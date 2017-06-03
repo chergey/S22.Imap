@@ -99,14 +99,14 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 			workstation.ThrowIfNull("workstation");
 
 			this.domain = Encoding.ASCII.GetBytes(domain);
-			if (this.domain.Length >= Int16.MaxValue) {
+			if (this.domain.Length >= short.MaxValue) {
 				throw new ArgumentOutOfRangeException("The supplied domain name must " +
-					"not be longer than " + Int16.MaxValue);
+					"not be longer than " + short.MaxValue);
 			}
 			this.workstation = Encoding.ASCII.GetBytes(workstation);
-			if (this.workstation.Length >= Int16.MaxValue) {
+			if (this.workstation.Length >= short.MaxValue) {
 				throw new ArgumentOutOfRangeException("The supplied workstation name " +
-					"must not be longer than " + Int16.MaxValue);
+					"must not be longer than " + short.MaxValue);
 			}
 
 			Flags = Flags.NegotiateUnicode | Flags.RequestTarget | Flags.NegotiateNTLM |

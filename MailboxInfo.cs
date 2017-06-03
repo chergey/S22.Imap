@@ -24,7 +24,7 @@ namespace S22.Imap {
 		/// <param name="UsedStorage">The amount of used storage of the mailbox, in bytes.</param>
 		/// <param name="FreeStorage">The amount of free storage of the mailbox, in bytes.</param>
 		internal MailboxInfo(string Name, IEnumerable<MailboxFlag> Flags, int Messages, int Unread,
-			uint NextUID, UInt64 UsedStorage, UInt64 FreeStorage) {
+			uint NextUID, ulong UsedStorage, ulong FreeStorage) {
 				this.Name = Name;
 				this.Flags = Flags;
 				this.Messages = Messages;
@@ -88,7 +88,7 @@ namespace S22.Imap {
 		/// <remarks>Not all IMAP servers support the retrieval of quota information. If it is not
 		/// possible to retrieve the amount of used storage, this property will be 0.
 		/// </remarks>
-		public UInt64 UsedStorage {
+		public ulong UsedStorage {
 			get;
 			private set;
 		}
@@ -99,7 +99,7 @@ namespace S22.Imap {
 		/// <remarks>Not all IMAP servers support the retrieval of quota information. If it is not
 		/// possible to retrieve the amount of free storage, this property will be 0.
 		/// </remarks>
-		public UInt64 FreeStorage {
+		public ulong FreeStorage {
 			get;
 			private set;
 		}

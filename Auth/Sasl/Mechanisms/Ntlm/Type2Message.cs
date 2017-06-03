@@ -47,7 +47,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// The SSPI context handle when a local call is being made,
 		/// otherwise null.
 		/// </summary>
-		public Int64 Context {
+		public long Context {
 			get;
 			private set;
 		}

@@ -83,7 +83,7 @@ namespace S22.Imap.Test {
 			{
 				"\"TEXT\" \"PLAIN\" (\"CHARSET\" \"UTF-8\") NIL NIL " +
 				"\"QUOTED-PRINTABLE\" 7388 179 NIL NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1") { Type = ContentType.Text, Subtype = "PLAIN",
 					 Encoding = ContentTransferEncoding.QuotedPrintable, Size = 7388,
 					 Lines = 179, Parameters = new Dictionary<string,string>() {
@@ -97,7 +97,7 @@ namespace S22.Imap.Test {
 				"\"HTML\" (\"CHARSET\" \"UTF-8\") NIL NIL \"QUOTED-PRINTABLE\"" +
 				" 17192 661 NIL NIL NIL) \"ALTERNATIVE\" (\"BOUNDARY\" " +
 				"\"----=_Part_769816_15327486.1278964428218\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1") { Type = ContentType.Text, Subtype = "PLAIN",
 					 Parameters = new Dictionary<string,string>() { {"CHARSET", "UTF-8"} },
 					 Encoding = ContentTransferEncoding.QuotedPrintable, Size = 3781,
@@ -132,7 +132,7 @@ namespace S22.Imap.Test {
 				"(\"FILENAME\" \"00A8F6006C84(IPCAM)_m20111104125754.jpg\")) NIL) \"RELATED\" " +
 				"(\"BOUNDARY\" \"Apple-Mail-71-651448002\" \"TYPE\" \"text/html\") NIL NIL) " +
 				"\"ALTERNATIVE\" (\"BOUNDARY\" \"Apple-Mail-70-651448002\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1") { Type = ContentType.Text, Subtype = "PLAIN",
  						Parameters = new Dictionary<string,string>() { {"CHARSET", "us-ascii"} },
 					  Encoding = ContentTransferEncoding.Bit7, Size = 236, Lines = 10
@@ -226,7 +226,7 @@ namespace S22.Imap.Test {
 				"NIL)(\"APPLICATION\" \"PDF\" (\"NAME\" \"EXPOSEE_OBJ_75[2](1).PDF\") NIL NIL " +
 				"\"BASE64\" 273842 NIL NIL NIL) \"MIXED\" (\"BOUNDARY\" " +
 				"\"----=_NextPart_000_00EA_01CC9AD4.C6FF0DD0\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1.1.1") { Type = ContentType.Text, Subtype = "PLAIN",
 						Parameters = new Dictionary<string,string>() { {"CHARSET", "iso-8859-1"} },
 						Encoding = ContentTransferEncoding.QuotedPrintable, Size = 730, Lines = 56
@@ -257,7 +257,7 @@ namespace S22.Imap.Test {
 				"=A9?= =?ISO-8859-1?Q?_2002_by_Pearson_Studium_<DDT>.pdf?=\")) NIL)(\"TEXT\" " +
 				"\"PLAIN\" (\"CHARSET\" \"us-ascii\") NIL NIL \"7BIT\" 30 3 NIL NIL NIL) \"MIXED\" " +
 				"(\"BOUNDARY\" \"Apple-Mail-2D9D90A6-E720-4FC2-B1D3-2E127A12A479\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1") { Type = ContentType.Text, Subtype = "PLAIN",
 						Parameters = new Dictionary<string,string>() { {"CHARSET", "us-ascii"} },
 						Encoding = ContentTransferEncoding.Bit7, Size = 4, Lines = 2
@@ -295,7 +295,7 @@ namespace S22.Imap.Test {
 				"\"0016364c769b92372504b17b63af\") NIL NIL)(\"IMAGE\" \"GIF\" (\"NAME\" " +
 				"\"342.gif\") \"<342@goomoji.gmail>\" NIL \"BASE64\" 282 NIL NIL NIL) " +
 				"\"RELATED\" (\"BOUNDARY\" \"0016364c769b92372b04b17b63b0\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1.1") { Type = ContentType.Text, Subtype = "PLAIN",
 						Parameters = new Dictionary<string,string>() { {"CHARSET", "ISO-8859-1"} },
 						Encoding = ContentTransferEncoding.QuotedPrintable, Size = 780,
@@ -316,7 +316,7 @@ namespace S22.Imap.Test {
 			{
 				"\"TEXT\" \"PLAIN\" (\"CHARSET\" \"iso-8859-1\" \"FORMAT\" \"flowed\" " +
 				"\"REPLY-TYPE\" \"original\") NIL NIL \"8BIT\" 6041 144 NIL NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1") { Type = ContentType.Text, Subtype = "PLAIN",
 						 Parameters = new Dictionary<string, string>() {
 						 {"CHARSET", "iso-8859-1"}, {"FORMAT", "flowed"},
@@ -343,7 +343,7 @@ namespace S22.Imap.Test {
 				"\"=?shift-jis?B?keWKd4LMg3aDi4Nag5ODZYNWg4eDk4FFj0iCUYJPglCCUA==?=\" \"MODIFICATION-DATE\" " +
 				"\"Wed, 29 Jun 2011 16:19:24 GMT\" \"SIZE\" \"865083\")) NIL) \"MIXED\" " +
 				"(\"BOUNDARY\" \"_006_EB0020BBA0510C4FB8044BB536D65F38718E570740XPERToutlawwi_\") NIL NIL",
-				new Bodypart[] {
+				new[] {
 					new Bodypart("1.1.1") { Type = ContentType.Text, Subtype = "PLAIN",
 						Parameters = new Dictionary<string,string>() { {"CHARSET", "shift-jis"} },
 						Encoding = ContentTransferEncoding.Base64, Size = 2010, Lines = 58

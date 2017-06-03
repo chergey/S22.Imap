@@ -111,7 +111,7 @@ namespace S22.Imap {
 		internal static void ThrowIfNullOrEmpty(this string s) {
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == String.Empty)
+			if (s == string.Empty)
 				throw new ArgumentException();
 		}
 
@@ -124,7 +124,7 @@ namespace S22.Imap {
 		internal static void ThrowIfNullOrEmpty(this string s, string name) {
 			if (s == null)
 				throw new ArgumentNullException(name);
-			if (s == String.Empty)
+			if (s == string.Empty)
 				throw new ArgumentException(name + " must not be empty.");
 		}
 
@@ -152,8 +152,8 @@ namespace S22.Imap {
 		/// encountered.</exception>
 		/// <returns>A concatenation of all enconded-words in the passed string</returns>
 		public static string DecodeWords(string words) {
-			if (String.IsNullOrEmpty(words))
-				return String.Empty;
+			if (string.IsNullOrEmpty(words))
+				return string.Empty;
 			MatchCollection matches = rxDecodeWord.Matches(words);
 			if (matches.Count == 0)
 				return words;
@@ -181,7 +181,7 @@ namespace S22.Imap {
 		/// Internal function reuse to add separation between multiple 'encoded-word's correctly.
 		/// </summary>
 		static void HandleFillData(StringBuilder decoded, string data) {
-			if (String.IsNullOrEmpty(data))
+			if (string.IsNullOrEmpty(data))
 				return;
 			// Cr or Lf is never in the result.
 			string FillData = data.Replace("\r", "").Replace("\n", "");
@@ -208,8 +208,8 @@ namespace S22.Imap {
 		/// Commonly used encodings for the encoded-word sytax are Q-Encoding and Base64. For an
 		/// in-depth description, refer to RFC 2047.</remarks>
 		internal static string DecodeWord(string word) {
-			if (String.IsNullOrEmpty(word))
-				return String.Empty;
+			if (string.IsNullOrEmpty(word))
+				return string.Empty;
 			Match m = rxDecodeWord.Match(word);
 			if (!m.Success)
 				return word;
@@ -292,8 +292,8 @@ namespace S22.Imap {
 		/// string.</exception>
 		/// <remarks>Refer to RFC2231 for the details of the encoding mechanism.</remarks>
 		internal static string Rfc2231Decode(string value) {
-			if (String.IsNullOrEmpty(value))
-				return String.Empty;
+			if (string.IsNullOrEmpty(value))
+				return string.Empty;
 			Match m = Regex.Match(value, @"^([\w\-]+)(?:\'[\w\-]*\')?(.*)");
 			if (!m.Success)
 				return value;

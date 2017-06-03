@@ -124,7 +124,7 @@ namespace S22.Imap.Bodystructure {
 		/// <returns>The read integer value.</returns>
 		/// <exception cref="EndOfStringException">Thrown when reading is
 		/// attempted past the end of the underlying string.</exception>
-		public Int64 ReadInteger() {
+		public long ReadInteger() {
 			StringBuilder builder = new StringBuilder();
 			SkipSpaces();
 			do {
@@ -134,7 +134,7 @@ namespace S22.Imap.Bodystructure {
 				else
 					break;
 			} while (Peek() >= '0' && Peek() <= '9');
-			return Int64.Parse(builder.ToString());
+			return long.Parse(builder.ToString());
 		}
 
 		/// <summary>

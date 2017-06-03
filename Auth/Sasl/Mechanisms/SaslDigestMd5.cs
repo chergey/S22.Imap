@@ -103,7 +103,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslDigestMd5(string username, string password) {
 			username.ThrowIfNull("username");
-			if (username == String.Empty)
+			if (username == string.Empty)
 				throw new ArgumentException("The username must not be empty.");
 			password.ThrowIfNull("password");
 
@@ -133,7 +133,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		private byte[] ComputeDigestResponse(byte[] challenge) {
 			// Precondition: Ensure username and password are not null and
 			// username is not empty.
-			if (String.IsNullOrEmpty(Username) || Password == null) {
+			if (string.IsNullOrEmpty(Username) || Password == null) {
 				throw new SaslException("The username must not be null or empty and " +
 					"the password must not be null.");
 			}
@@ -157,7 +157,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 				"response=" + responseValue,
 				"qop=" + fields["qop"]
 			};
-			string challengeResponse = String.Join(",", directives);
+			string challengeResponse = string.Join(",", directives);
 			// Finally, return the response as a byte array.
 			return Encoding.ASCII.GetBytes(challengeResponse);
 		}

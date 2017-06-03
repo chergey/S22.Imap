@@ -31,7 +31,7 @@ namespace S22.Imap.Test {
 			string finalResponse = Encoding.ASCII.GetString(
 				m.GetResponse(Encoding.ASCII.GetBytes("rspauth=ea40f60335c427b5" +
 				"527b84dbabcdfffd")));
-			Assert.AreEqual<string>(String.Empty, finalResponse);
+			Assert.AreEqual<string>(string.Empty, finalResponse);
 		}
 	}
 }

@@ -209,7 +209,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 		/// <returns>The NTLM hash for the specified password.</returns>
 		/// <exception cref="ArgumentNullException">Thrown if the password
 		/// parameter is null.</exception>
-		private static byte[] NtlmHash(String password) {
+		private static byte[] NtlmHash(string password) {
 			password.ThrowIfNull("password");
 			byte[] data = Encoding.Unicode.GetBytes(password);
 			using (MD4 md4 = new MD4()) {

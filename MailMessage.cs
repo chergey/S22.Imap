@@ -24,11 +24,11 @@ namespace S22.Imap {
 		/// does not contain any date information.</returns>
 		public static DateTime? Date(this MailMessage message) {
 			string date = message.Headers["Date"];
-			if (String.IsNullOrEmpty(date))
+			if (string.IsNullOrEmpty(date))
 				return null;
 			// Dates are sometimes suffixed with comments indicating the timezone, for example:
 			// Tue, 29 Mar 2005 15:11:45 -0800 (PST).
-			date = Regex.Replace(date, @"\([^\)]+\)", String.Empty);
+			date = Regex.Replace(date, @"\([^\)]+\)", string.Empty);
 			try {
 				return DateTime.Parse(date);
 			} catch (FormatException) {
@@ -81,7 +81,7 @@ namespace S22.Imap {
 				"Content-Type", "Content-Transfer-Encoding", "Priority",
 				"Reply-To", "X-Priority", "Importance", "Sender", "Message-Id"
 			};
-			var date = String.IsNullOrEmpty(m.Headers["Date"]) ? DateTime.Now.ToString("R") :
+			var date = string.IsNullOrEmpty(m.Headers["Date"]) ? DateTime.Now.ToString("R") :
 				m.Headers["Date"];
 			NameValueCollection header = new NameValueCollection() {
 				{ "MIME-Version", "1.0" },
@@ -184,9 +184,9 @@ namespace S22.Imap {
 		/// <param name="address">The MailAddress instance to create the address string from.</param>
 		/// <returns>An address string as is used in RFC822 mail headers.</returns>
 		internal static string To822Address(this MailAddress address) {
-			if (!String.IsNullOrEmpty(address.DisplayName)) {
+			if (!string.IsNullOrEmpty(address.DisplayName)) {
 				string name = address.DisplayName.IsASCII() ?
-					String.Format("\"{0}\"", address.DisplayName) : Base64Encode(address.DisplayName);
+					string.Format("\"{0}\"", address.DisplayName) : Base64Encode(address.DisplayName);
 				return name + " <" + address.Address + ">";
 			}
 			return address.Address;
@@ -296,7 +296,7 @@ namespace S22.Imap {
 			}
 			builder.AppendLine(contentType);
 			builder.AppendLine("Content-Transfer-Encoding: base64");
-			if (!String.IsNullOrEmpty(view.ContentId))
+			if (!string.IsNullOrEmpty(view.ContentId))
 				builder.AppendLine("Content-Id: <" + view.ContentId + ">");
 			if (view is Attachment)
 				builder.AppendLine("Content-Disposition: attachment");

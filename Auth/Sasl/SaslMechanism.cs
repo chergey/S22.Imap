@@ -62,7 +62,7 @@ namespace S22.Imap.Auth.Sasl {
 		/// not be retrieved. Refer to the inner exception for error details.</exception>
 		public string GetResponse(string challenge) {
 			try {
-				byte[] data = String.IsNullOrEmpty(challenge) ? new byte[0] :
+				byte[] data = string.IsNullOrEmpty(challenge) ? new byte[0] :
 					Convert.FromBase64String(challenge);
 				byte[] response = ComputeResponse(data);
 				return Convert.ToBase64String(response);

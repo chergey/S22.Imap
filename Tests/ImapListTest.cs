@@ -14,7 +14,7 @@ namespace S22.Imap.Test {
 		/// </summary>
 		[TestMethod]
 		public void ListSelectableMailboxes() {
-			string[] expected = new string[] {
+			string[] expected = {
 				"INBOX",
 				"[Gmail]/Όλα τα μηνύματα",
 				"[Gmail]/Ανεπιθύμητα",

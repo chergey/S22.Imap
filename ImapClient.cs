@@ -34,12 +34,8 @@ namespace S22.Imap {
 		string defaultMailbox = "INBOX";
 		event EventHandler<IdleMessageEventArgs> newMessageEvent;
 		event EventHandler<IdleMessageEventArgs> messageDeleteEvent;
-		bool hasEvents {
-			get {
-				return newMessageEvent != null || messageDeleteEvent != null;
-			}
-		}
-		bool idling;
+		bool hasEvents => newMessageEvent != null || messageDeleteEvent != null;
+	    bool idling;
 		Thread idleThread, idleDispatch;
 		int pauseRefCount = 0;
 		SafeQueue<string> idleEvents = new SafeQueue<string>();
@@ -56,10 +52,8 @@ namespace S22.Imap {
 		/// <remarks>The default value for this property is "INBOX" which is a special name reserved
 		/// to mean "the primary mailbox for this user on this server".</remarks>
 		public string DefaultMailbox {
-			get {
-				return defaultMailbox;
-			}
-			set {
+			get => defaultMailbox;
+		    set {
 				value.ThrowIfNullOrEmpty();
 				defaultMailbox = value;
 			}
@@ -363,18 +357,18 @@ namespace S22.Imap {
 						ns.AuthenticateAsClient(
 							new NetworkCredential(username, password),
 							null,
-							String.Empty,
+							string.Empty,
 							useNtlm ? ProtectionLevel.None : ProtectionLevel.EncryptAndSign,
 							System.Security.Principal.TokenImpersonationLevel.Delegation);
 					} catch {
-						return String.Empty;
+						return string.Empty;
 					}
 				}
 			}
 			response = GetResponse();
 			// Swallow any continuation data we unexpectedly receive from the server.
 			while (response.StartsWith("+ "))
-				response = SendCommandGetResponse(String.Empty);
+				response = SendCommandGetResponse(string.Empty);
 			return response;
 		}
 
@@ -419,7 +413,7 @@ namespace S22.Imap {
 				if (response.StartsWith(tag))
 					break;
 				// Strip off continuation request '+'-character and possible whitespace.
-				string challenge = Regex.Replace(response, @"^\+\s?", String.Empty);
+				string challenge = Regex.Replace(response, @"^\+\s?", string.Empty);
 				// Compute and send off the challenge-response.
 				response = m.GetResponse(challenge);
 				response = SendCommandGetResponse(response);
@@ -847,7 +841,7 @@ namespace S22.Imap {
 					mailbox = defaultMailbox;
 				MailboxStatus status = GetMailboxStatus(mailbox);
 				// Collect quota information if the server supports it.
-				UInt64 used = 0, free = 0;
+				ulong used = 0, free = 0;
 				if (Supports("QUOTA")) {
 					IEnumerable<MailboxQuota> quotas = GetQuota(mailbox);
 					foreach (MailboxQuota q in quotas) {
@@ -1424,7 +1418,7 @@ namespace S22.Imap {
 				SelectMailbox(mailbox);
 				string tag = GetTag();
 				string response = SendCommandGetResponse(tag + "UID FETCH " + uid + " (BODYSTRUCTURE)");
-				string structure = String.Empty;
+				string structure = string.Empty;
 				while (response.StartsWith("*")) {
 					Match m = Regex.Match(response,
 						@"FETCH \(.*BODYSTRUCTURE \((.*)\).*\)", RegexOptions.IgnoreCase);
@@ -2213,8 +2207,8 @@ namespace S22.Imap {
 					if (m.Success) {
 						try {
 							MailboxQuota quota = new MailboxQuota(m.Groups[2].Value,
-								UInt32.Parse(m.Groups[3].Value),
-								UInt32.Parse(m.Groups[4].Value));
+								uint.Parse(m.Groups[3].Value),
+								uint.Parse(m.Groups[4].Value));
 							quotas.Add(quota);
 						} catch {
 							throw new BadServerResponseException(response);

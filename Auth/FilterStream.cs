@@ -129,7 +129,7 @@ namespace S22.Imap.Auth {
 			try {
 				// Strip off "+ " continuation command; IMAP and POP3 both use this syntax
 				// whereas SMTP uses "334 ".
-				base64 = Regex.Replace(base64, @"^(\+|334)\s", String.Empty);
+				base64 = Regex.Replace(base64, @"^(\+|334)\s", string.Empty);
 				decoded = Convert.FromBase64String(base64);
 			} catch (FormatException) {
 				// If the server didn't respond with base64-data, something must have gone

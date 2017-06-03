@@ -77,7 +77,7 @@ namespace S22.Imap.Test {
 			byte[] serverLast = Encoding.UTF8.GetBytes("v=rmF9pqV8S7suAoZWja4dJ" +
 				"RkFsKQ=");
 			clientFinal = Encoding.UTF8.GetString(s.GetResponse(serverLast));
-			Assert.AreEqual<string>(String.Empty, clientFinal);
+			Assert.AreEqual<string>(string.Empty, clientFinal);
 		}
 
 		/// <summary>

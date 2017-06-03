@@ -58,7 +58,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslOAuth(string accessToken) {
 			accessToken.ThrowIfNull("accessToken");
-			if (accessToken == String.Empty)
+			if (accessToken == string.Empty)
 				throw new ArgumentException("The access token must not be empty.");
 
 			AccessToken = accessToken;
@@ -73,7 +73,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// be computed.</exception>
 		protected override byte[] ComputeResponse(byte[] challenge) {
 			// Precondition: Ensure access token is not null and is not empty.
-			if (String.IsNullOrEmpty(AccessToken))
+			if (string.IsNullOrEmpty(AccessToken))
 				throw new SaslException("The access token must not be null or empty.");
 
 			// Sasl OAuth does not involve another roundtrip.

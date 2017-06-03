@@ -75,7 +75,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslPlain(string username, string password) {
 			username.ThrowIfNull("username");
-			if (username == String.Empty)
+			if (username == string.Empty)
 				throw new ArgumentException("The username must not be empty.");
 			password.ThrowIfNull("password");
 
@@ -94,7 +94,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		protected override byte[] ComputeResponse(byte[] challenge) {
 			// Precondition: Ensure username and password are not null and
 			// username is not empty.
-			if (String.IsNullOrEmpty(Username) || Password == null) {
+			if (string.IsNullOrEmpty(Username) || Password == null) {
 				throw new SaslException("The username must not be null or empty and " +
 					"the password must not be null.");
 			}

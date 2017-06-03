@@ -116,7 +116,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslScramSha1(string username, string password) {
 			username.ThrowIfNull("username");
-			if (username == String.Empty)
+			if (username == string.Empty)
 				throw new ArgumentException("The username must not be empty.");
 			password.ThrowIfNull("password");
 
@@ -134,7 +134,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		protected override byte[] ComputeResponse(byte[] challenge) {
 			// Precondition: Ensure username and password are not null and
 			// username is not empty.
-			if (String.IsNullOrEmpty(Username) || Password == null) {
+			if (string.IsNullOrEmpty(Username) || Password == null) {
 				throw new SaslException("The username must not be null or empty and " +
 					"the password must not be null.");
 			}
@@ -170,7 +170,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 			NameValueCollection nv = ParseServerFirstMessage(challenge);
 			// Extract the server data needed to calculate the client proof.
 			string salt = nv["s"], nonce = nv["r"];
-			int iterationCount = Int32.Parse(nv["i"]);
+			int iterationCount = int.Parse(nv["i"]);
 			if (!VerifyServerNonce(nonce))
 				throw new SaslException("Invalid server nonce: " + nonce);
 			// Calculate the client proof (refer to RFC 5802, p.7).

@@ -29,7 +29,7 @@ namespace S22.Imap {
 		/// <summary>
 		/// The current usage of the resource this MailboxQuota instance describes, in bytes.
 		/// </summary>
-		public UInt64 Usage {
+		public ulong Usage {
 			get;
 			private set;
 		}
@@ -37,7 +37,7 @@ namespace S22.Imap {
 		/// <summary>
 		/// The limit of the resource this MailboxQuota instance describes, in bytes.
 		/// </summary>
-		public UInt64 Limit {
+		public ulong Limit {
 			get;
 			private set;
 		}

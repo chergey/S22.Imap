@@ -60,8 +60,8 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Srp {
 		public ClientMessage1(string username, string authId = null) {
 			username.ThrowIfNull("username");
 			Username = username;
-			AuthId = authId ?? String.Empty;
-			SessionId = String.Empty;
+			AuthId = authId ?? string.Empty;
+			SessionId = string.Empty;
 			ClientNonce = new byte[0];
 		}
 

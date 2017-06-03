@@ -103,13 +103,13 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Srp {
 		public string BuildOptionsString() {
 			List<string> list = new List<string>();
 			foreach (string key in Options) {
-				if (String.IsNullOrEmpty(Options[key]) || "true".Equals(
+				if (string.IsNullOrEmpty(Options[key]) || "true".Equals(
 					Options[key], StringComparison.InvariantCultureIgnoreCase))
 					list.Add(key);
 				else
 					list.Add(key + "=" + Options[key]);
 			}
-			return String.Join(",", list.ToArray());
+			return string.Join(",", list.ToArray());
 		}
 	}
 }

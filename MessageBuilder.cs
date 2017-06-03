@@ -66,7 +66,7 @@ namespace S22.Imap {
 			StringReader reader = new StringReader(text);
 			StringBuilder header = new StringBuilder();
 			string line;
-			while (!String.IsNullOrEmpty(line = reader.ReadLine()))
+			while (!string.IsNullOrEmpty(line = reader.ReadLine()))
 				header.AppendLine(line);
 			MailMessage m = FromHeader(header.ToString());
 			MIMEPart[] parts = ParseMailBody(reader.ReadToEnd(), m.Headers);
@@ -88,7 +88,7 @@ namespace S22.Imap {
 			var exclude = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) {
 				"Subject", "Comments", "Content-disposition", "User-Agent" };
 			while ((line = reader.ReadLine()) != null) {
-				if (line == String.Empty)
+				if (line == string.Empty)
 					continue;
 				// Values may stretch over several lines.
 				if (line[0] == ' ' || line[0] == '\t') {
@@ -116,7 +116,7 @@ namespace S22.Imap {
 		/// <param name="s">The string to strip comments from.</param>
 		/// <returns>A new string stripped of any comments.</returns>
 		internal static string StripComments(string s) {
-			if (String.IsNullOrEmpty(s))
+			if (string.IsNullOrEmpty(s))
 				return s;
 			bool inQuotes = false, escape = false;
 			char last = ' ';
@@ -176,7 +176,7 @@ namespace S22.Imap {
 				coll.Add("value", mvalue.Success ? mvalue.Groups[1].Value.Trim() : "");
 			} catch {
 				// We don't want this to blow up on the user with weird mails.
-				coll.Add("value", String.Empty);
+				coll.Add("value", string.Empty);
 			}
 			return coll;
 		}
@@ -189,7 +189,7 @@ namespace S22.Imap {
 		/// <returns>An array of MailAddress objects representing the parsed mail addresses.</returns>
 		internal static MailAddress[] ParseAddressList(string list) {
 			List<MailAddress> mails = new List<MailAddress>();
-			if (String.IsNullOrEmpty(list))
+			if (string.IsNullOrEmpty(list))
 				return mails.ToArray();
 			foreach (string part in SplitAddressList(list)) {
 				MailAddressCollection mcol = new MailAddressCollection();
@@ -356,7 +356,7 @@ namespace S22.Imap {
 			// If the MailMessage's Body fields haven't been initialized yet, put it there. Some weird
 			// (i.e. spam) mails like to omit content-types so we don't check for that here and just
 			// assume it's text.
-			if (String.IsNullOrEmpty(message.Body) &&
+			if (string.IsNullOrEmpty(message.Body) &&
 				part.Disposition.Type != ContentDispositionType.Attachment) {
 				message.Body = encoding.GetString(bytes);
 				message.BodyEncoding = encoding;
@@ -390,9 +390,9 @@ namespace S22.Imap {
 			string name = part.Disposition.Filename;
 			// Many MUAs put the file name in the name parameter of the content-type header instead of
 			// the filename parameter of the content-disposition header.
-			if (String.IsNullOrEmpty(name) && part.Parameters.ContainsKey("name"))
+			if (string.IsNullOrEmpty(name) && part.Parameters.ContainsKey("name"))
 				name = part.Parameters["name"];
-			if (String.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(name))
 				name = Path.GetRandomFileName();
 			Attachment attachment = new Attachment(stream, name);
 			try {
@@ -481,7 +481,7 @@ namespace S22.Imap {
 				MIMEPart p = new MIMEPart();
 				// Read the part header.
 				StringBuilder header = new StringBuilder();
-				while (!String.IsNullOrEmpty(line = reader.ReadLine()))
+				while (!string.IsNullOrEmpty(line = reader.ReadLine()))
 					header.AppendLine(line);
 				p.header = ParseMailHeader(header.ToString());
 				// Account for nested multipart content.
@@ -498,7 +498,7 @@ namespace S22.Imap {
 				p.body = body.ToString();
 				// Add the MIME part to the list unless body is null or empty which means the body
 				// contained nested multipart content.
-				if(p.body != null && p.body.Trim() != String.Empty)
+				if(p.body != null && p.body.Trim() != string.Empty)
 					list.Add(p);
 				// If this boundary is the end boundary, we're done.
 				if (line == null || line.StartsWith(end))

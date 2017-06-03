@@ -210,7 +210,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms.Ntlm {
 			// Setup the security buffers contents.
 			this.username = encoding.GetBytes(username);
 			this.workstation = encoding.GetBytes(workstation);
-			this.targetName = String.IsNullOrEmpty(targetName) ? new byte[0] :
+			this.targetName = string.IsNullOrEmpty(targetName) ? new byte[0] :
 				encoding.GetBytes(targetName);
 			// The session key is not relevant to authentication.
 			this.sessionKey = new byte[0];

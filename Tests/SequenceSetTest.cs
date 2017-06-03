@@ -15,7 +15,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void CollapseOverlappingRanges() {
-			var list = new List<uint>() { 1, 2, 3, 2, 3, 4 };
+			var list = new List<uint> { 1, 2, 3, 2, 3, 4 };
 			Assert.AreEqual("1:4", Util.BuildSequenceSet(list));
 		}
 
@@ -25,7 +25,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void CollapseContiguousRanges() {
-			var list = new List<uint>() { 1, 2, 3, 4, 5, 6 };
+			var list = new List<uint> { 1, 2, 3, 4, 5, 6 };
 			Assert.AreEqual("1:6", Util.BuildSequenceSet(list));
 		}
 
@@ -35,7 +35,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void RemoveDuplicateUIDs() {
-			var list = new List<uint>() { 1, 1 };
+			var list = new List<uint> { 1, 1 };
 			Assert.AreEqual("1", Util.BuildSequenceSet(list));
 		}
 
@@ -45,7 +45,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void UIDsDoNotOverlapRanges() {
-			var list = new List<uint>() { 1, 2, 3, 2 };
+			var list = new List<uint> { 1, 2, 3, 2 };
 			Assert.AreEqual("1:3", Util.BuildSequenceSet(list));
 		}
 
@@ -55,7 +55,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void RangesDoNotOverlapUIDs() {
-			var list = new List<uint>() { 2, 1, 2, 3 };
+			var list = new List<uint> { 2, 1, 2, 3 };
 			Assert.AreEqual("1:3", Util.BuildSequenceSet(list));
 		}
 
@@ -65,7 +65,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void RangesAndUIDs() {
-			var list = new List<uint>() { 1, 3, 4, 5, 7 };
+			var list = new List<uint> { 1, 3, 4, 5, 7 };
 			Assert.AreEqual("1,3:5,7", Util.BuildSequenceSet(list));
 		}
 
@@ -75,7 +75,7 @@ namespace S22.Imap.Test {
 		[TestMethod]
 		[TestCategory("BuildSequenceSet")]
 		public void SingleUID() {
-			var list = new List<uint>() { 4 };
+			var list = new List<uint> { 4 };
 			Assert.AreEqual("4", Util.BuildSequenceSet(list));
 		}
 

@@ -23,12 +23,12 @@ namespace S22.Imap.Test {
 			// Test that a valid format is generated for the mailadress,
 			// as well as the parsing works.
 			addr = MessageBuilder.ParseAddressList(
-				MailMessageExtension.To822Address(from));
+				@from.To822Address());
 			Assert.AreEqual(from.Address, addr[0].Address);
 			Assert.AreEqual(from.DisplayName, addr[0].DisplayName);
 
 			addr = MessageBuilder.ParseAddressList(
-				MailMessageExtension.To822Address(to));
+				to.To822Address());
 			Assert.AreEqual(to.Address, addr[0].Address);
 			Assert.AreEqual(to.DisplayName, addr[0].DisplayName);
 		}
@@ -61,12 +61,12 @@ namespace S22.Imap.Test {
 			// the same values.
 			MailMessage r = MessageBuilder.FromMIME822(mime822);
 
-			Assert.AreEqual<MailAddress>(from, r.From);
-			Assert.AreEqual<MailAddress>(to, r.To.First());
-			Assert.AreEqual<string>(cc_one, r.CC.First().Address);
-			Assert.AreEqual<string>(cc_two, r.CC.Last().Address);
-			Assert.AreEqual<string>(subject, r.Subject);
-			Assert.AreEqual<string>(body, r.Body);
+			Assert.AreEqual(from, r.From);
+			Assert.AreEqual(to, r.To.First());
+			Assert.AreEqual(cc_one, r.CC.First().Address);
+			Assert.AreEqual(cc_two, r.CC.Last().Address);
+			Assert.AreEqual(subject, r.Subject);
+			Assert.AreEqual(body, r.Body);
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace S22.Imap.Test {
 				// attachment is identical to our resource file.
 				MailMessage r = MessageBuilder.FromMIME822(mime822);
 
-				Assert.AreEqual<int>(1, r.Attachments.Count);
+				Assert.AreEqual(1, r.Attachments.Count);
 				using (var br = new BinaryReader(r.Attachments[0].ContentStream)) {
 					byte[] constructed = br.ReadBytes((int)br.BaseStream.Length);
 					Assert.IsTrue(

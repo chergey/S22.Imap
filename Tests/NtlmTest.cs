@@ -40,18 +40,18 @@ namespace S22.Imap.Test {
 			Flags expectedFlags = Flags.NegotiateUnicode |
 				Flags.NegotiateNTLM | Flags.TargetTypeDomain |
 				Flags.NegotiateTargetInfo;
-			Assert.AreEqual<Type2Version>(Type2Version.Version2, msg.Version);
-			Assert.AreEqual<Flags>(expectedFlags, msg.Flags);
+			Assert.AreEqual(Type2Version.Version2, msg.Version);
+			Assert.AreEqual(expectedFlags, msg.Flags);
 			Assert.IsTrue(expectedChallenge.SequenceEqual(msg.Challenge));
-			Assert.AreEqual<long>(0, msg.Context);
-			Assert.AreEqual<string>("DOMAIN", msg.TargetName);
-			Assert.AreEqual<string>("DOMAIN",
+			Assert.AreEqual(0, msg.Context);
+			Assert.AreEqual("DOMAIN", msg.TargetName);
+			Assert.AreEqual("DOMAIN",
 				msg.TargetInformation.DomainName);
-			Assert.AreEqual<string>("SERVER",
+			Assert.AreEqual("SERVER",
 				msg.TargetInformation.ServerName);
-			Assert.AreEqual<string>("domain.com",
+			Assert.AreEqual("domain.com",
 				msg.TargetInformation.DnsDomainName);
-			Assert.AreEqual<string>("server.domain.com",
+			Assert.AreEqual("server.domain.com",
 				msg.TargetInformation.DnsHostname);
 		}
 
@@ -67,18 +67,18 @@ namespace S22.Imap.Test {
 			byte[] expectedChallenge = new byte[] {
 				0xA6, 0xBC, 0xAF, 0x32, 0xA5, 0x51, 0x36, 0x65
 			};
-			Assert.AreEqual<Type2Version>(Type2Version.Version3, msg.Version);
-			Assert.AreEqual<int>(42009093, (int)msg.Flags);
+			Assert.AreEqual(Type2Version.Version3, msg.Version);
+			Assert.AreEqual(42009093, (int)msg.Flags);
 			Assert.IsTrue(expectedChallenge.SequenceEqual(msg.Challenge));
-			Assert.AreEqual<long>(0, msg.Context);
-			Assert.AreEqual<string>("LOCALHOST", msg.TargetName);
-			Assert.AreEqual<string>("LOCALHOST",
+			Assert.AreEqual(0, msg.Context);
+			Assert.AreEqual("LOCALHOST", msg.TargetName);
+			Assert.AreEqual("LOCALHOST",
 				msg.TargetInformation.DomainName);
-			Assert.AreEqual<string>("VMWARE-5T5GC9PU",
+			Assert.AreEqual("VMWARE-5T5GC9PU",
 				msg.TargetInformation.ServerName);
-			Assert.AreEqual<string>("localhost",
+			Assert.AreEqual("localhost",
 				msg.TargetInformation.DnsDomainName);
-			Assert.AreEqual<string>("vmware-5t5gc9pu.localhost",
+			Assert.AreEqual("vmware-5t5gc9pu.localhost",
 				msg.TargetInformation.DnsHostname);
 			Assert.AreEqual<short>(3790, msg.OSVersion.BuildNumber);
 			Assert.AreEqual<short>(5, msg.OSVersion.MajorVersion);

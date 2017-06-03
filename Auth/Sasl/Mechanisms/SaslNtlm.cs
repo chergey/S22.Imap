@@ -81,7 +81,7 @@ namespace S22.Imap.Auth.Sasl.Mechanisms {
 		/// parameter is empty.</exception>
 		public SaslNtlm(string username, string password) {
 			username.ThrowIfNull("username");
-			if (username == String.Empty)
+			if (username == string.Empty)
 				throw new ArgumentException("The username must not be empty.");
 			password.ThrowIfNull("password");
 

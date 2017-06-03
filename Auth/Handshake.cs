@@ -47,7 +47,7 @@ namespace S22.Imap.Auth {
 		/// Defines the size, in bytes, of the AuthPayload field, which immediately
 		/// follows the handshake.
 		/// </summary>
-		public UInt16 PayloadSize {
+		public ushort PayloadSize {
 			get;
 			set;
 		}
